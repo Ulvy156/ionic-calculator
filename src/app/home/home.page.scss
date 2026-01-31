@@ -1,27 +1,101 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.display-wrapper {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  overflow-x: auto;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+
+.display-text {
+  color: white;
+  font-weight: 300;
+  text-align: right;
+
+  white-space: nowrap;
+  min-width: 100%;
+}
+ion-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  background: white;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+ion-text > h6{
+  font-size: 60px;
 }
 
-#container a {
-  text-decoration: none;
+ion-col {
+  height: 80px;
+  width: 80px;
+  border-radius: 100%;
+  font-size: 28px;
+  border: none;
+  color: white;
+  background: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ion-grid {
+  margin-top: auto; /* 👈 THIS pushes it to bottom */
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+}
+
+ion-row {
+  display: flex;
+  gap: 12px;
+}
+
+ion-icon {
+  font-size: 25px;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 20px;
+}
+
+.btn {
+  height: 80px;
+  border-radius: 50%;
+  font-size: 28px;
+  border: none;
+  color: white;
+}
+
+.dark {
+  background: #333;
+}
+
+.gray {
+  background: #a5a5a5;
+  color: black;
+}
+
+.orange {
+  background: #ff9f0a;
+}
+
+.zero {
+  grid-column: span 2;
+  border-radius: 40px;
+  text-align: left;
+  padding-left: 30px;
+}
+
+.header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0 10px;
+  margin-top: 10px;
 }
