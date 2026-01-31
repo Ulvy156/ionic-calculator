@@ -5,6 +5,7 @@
   align-items: flex-end;
   justify-content: flex-end;
   overflow-x: auto;
+  margin-top: 65%;
 }
 
 
@@ -16,11 +17,15 @@
   white-space: nowrap;
   min-width: 100%;
 }
-ion-content {
+.calculator {
   display: flex;
   flex-direction: column;
   justify-content: end;
   background: white;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
 }
 
 ion-text > h6{
@@ -28,10 +33,10 @@ ion-text > h6{
 }
 
 ion-col {
-  height: 80px;
-  width: 80px;
+  height: auto;
+  width: 25%;
   border-radius: 100%;
-  font-size: 28px;
+  font-size: 30px;
   border: none;
   color: white;
   background: #333;
@@ -54,14 +59,13 @@ ion-row {
 }
 
 ion-icon {
-  font-size: 25px;
+  font-size: 40px;
 }
 
 .keypad {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  padding: 20px;
+
+  // padding: 20px;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .btn {

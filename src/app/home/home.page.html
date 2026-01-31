@@ -1,44 +1,12 @@
+<ion-header (click)="toggleHistory()" class="ion-no-border" style="text-align: center;">
+  <ion-toolbar>
+    <ion-title>View History</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content fullscreen class="calculator">
-  <!-- DISPLAY -->
-  <ion-row class="header">
-    <ion-icon name="alarm-outline" (click)="toggleHistory()"></ion-icon>
-    <ion-modal [isOpen]="showHistory" [breakpoints]="[0, 0.4, 0.8, 1]" [initialBreakpoint]="1">
-      <ng-template>
 
-        <ion-header>
-          <ion-toolbar>
-            <ion-title>History</ion-title>
-            <ion-buttons slot="end">
-              <ion-button (click)="toggleHistory()">Close</ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-        </ion-header>
-
-        <ion-content class="ion-padding">
-          <!-- HISTORY -->
-          <ion-list [inset]="true">
-            <ion-item *ngFor="let h of history" lines="none" (click)="reuseHistory(h)">
-              <ion-label>
-                <h2>{{ h.expression }} = {{ h.result }}</h2>
-                <p>{{ h.date }}</p>
-              </ion-label>
-            </ion-item>
-          </ion-list>
-          <ion-alert trigger="present-alert" header="Clear History"
-            message="Are you sure you want to delete all calculation history?" [buttons]="alertButtons">
-          </ion-alert>
-          <ion-button id="present-alert" expand="block" fill="clear" color="danger">
-            Clear History
-          </ion-button>
-
-        </ion-content>
-
-      </ng-template>
-    </ion-modal>
-
-    <ion-icon name="alarm-outline"></ion-icon>
-  </ion-row>
-
+  <!-- display result -->
   <div class="display-wrapper">
     <ion-text class="display-text" color="white">
       <h6>{{ formattedDisplay || '0' }}</h6>
@@ -95,3 +63,49 @@
   </ion-grid>
 
 </ion-content>
+
+<!-- DISPLAY MODAL HISTORY -->
+<ion-row class="header">
+  <ion-modal [isOpen]="showHistory" [breakpoints]="[0, 0.4, 0.8, 1]" [initialBreakpoint]="1">
+    <ng-template>
+
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>History</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="toggleHistory()">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <!-- HISTORY -->
+        <ion-button id="present-alert" expand="block" fill="clear" color="danger">
+          Clear History
+          <ion-badge slot="end" color="success" style="margin-left: 10px;">{{history.length}}</ion-badge>
+        </ion-button>
+        <ion-list [inset]="true">
+          <ion-item *ngFor="let h of history" lines="none" (click)="reuseHistory(h)">
+            <ion-label>
+              <h2>{{ h.expression }} = {{ h.result }}</h2>
+              <p>{{ h.date }}</p>
+            </ion-label>
+            <ion-icon style="font-size: 23px; " color="danger" name="trash-outline"
+              (click)="deleteHistory(h, $event)"></ion-icon>
+          </ion-item>
+        </ion-list>
+        <ion-alert trigger="present-alert" header="Clear History"
+          message="Are you sure you want to delete all calculation history?" [buttons]="alertButtons">
+        </ion-alert>
+
+      </ion-content>
+
+    </ng-template>
+  </ion-modal>
+</ion-row>
+
+<!-- <ion-footer (click)="toggleHistory()" class="ion-no-border">
+  <ion-toolbar style="margin: 0 auto; text-align: center;">
+    <ion-title>View History</ion-title>
+  </ion-toolbar>
+</ion-footer> -->

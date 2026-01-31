@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CalculatorService } from '../services/calculator.service';
 import { AlertController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -36,7 +37,8 @@ export class HomePage {
 
   constructor(
     private calcService: CalculatorService,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController
   ) { }
 
 
@@ -94,8 +96,35 @@ export class HomePage {
 
   calculate() {
     try {
-      const result = this.calcService.calculate(this.display);
+      let expr = this.display;
 
+      // iOS-style % for + and -
+      const percentMatch = expr.match(
+        /^(\d+(\.\d+)?)(\s*[+\-]\s*)(\d+(\.\d+)?)%$/
+      );
+
+      let result: number;
+
+      if (percentMatch) {
+        const base = Number(percentMatch[1]);
+        const operator = percentMatch[3].trim();
+        const percent = Number(percentMatch[4]);
+
+        const value = base * percent / 100;
+        result = operator === '+'
+          ? base + value
+          : base - value;
+      } else {
+        // normal % (×, ÷, standalone)
+        const resolved = expr.replace(
+          /(\d+(\.\d+)?)%/g,
+          '($1/100)'
+        );
+
+        result = this.calcService.calculate(resolved);
+      }
+
+      // save history
       const record = {
         expression: this.formattedDisplay,
         result: result.toLocaleString('en-US'),
@@ -103,21 +132,15 @@ export class HomePage {
       };
 
       this.history.unshift(record);
-
-      // limit history
-      if (this.history.length > 15) {
-        this.history.pop();
-      }
-
-      // 🔐 SAVE TO LOCAL STORAGE
+      if (this.history.length > 15) this.history.pop();
       localStorage.setItem('calc_history', JSON.stringify(this.history));
 
       this.display = result.toString();
+
     } catch {
       this.display = 'Error';
     }
   }
-
 
   get formattedDisplay(): string {
     if (!this.display) return '0';
@@ -207,20 +230,18 @@ export class HomePage {
   }
 
   percent() {
+    if (!this.display) return;
+
+    // prevent multiple % on same number
     if (this.display.endsWith('%')) return;
 
-    // match the last number in the expression
-    const match = this.display.match(/(\d+(\.\d+)?)$/);
-    if (!match) return;
+    // only allow % after a number
+    const lastChar = this.display.slice(-1);
+    if (isNaN(Number(lastChar))) return;
 
-    const value = match[0];
-    const percentValue = (Number(value) / 100).toString();
-
-    // replace only the last number
-    this.display =
-      this.display.slice(0, this.display.length - value.length) +
-      percentValue;
+    this.display += '%';
   }
+
 
 
   toggleHistory() {
@@ -254,5 +275,32 @@ export class HomePage {
 
     await alert.present();
   }
+
+  async deleteHistory(item: {
+    expression: string;
+    result: string;
+    date: string;
+  }, event: Event) {
+
+    // prevent reuse click
+    event.stopPropagation();
+
+    // remove by date (acts as unique id)
+    this.history = this.history.filter(h => h.date !== item.date);
+
+    // update storage
+    localStorage.setItem('calc_history', JSON.stringify(this.history));
+
+    // toast notification
+    const toast = await this.toastCtrl.create({
+      message: 'History deleted',
+      duration: 1500,
+      position: 'bottom',
+      color: 'dark',
+    });
+
+    await toast.present();
+  }
+
 
 }
