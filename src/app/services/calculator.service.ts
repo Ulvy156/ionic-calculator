@@ -6,23 +6,15 @@ import { Injectable } from '@angular/core';
 export class CalculatorService {
 
   calculate(expression: string): number {
-    const tokens = expression.match(/(\d+\.?\d*|\+|\-|\*|\/)/g);
-    if (!tokens) return 0;
+    try {
+      // sanitize input (allow only math characters)
+      const safe = expression.replace(/[^0-9+\-*/.()]/g, '');
 
-    let result = Number(tokens[0]);
+      // evaluate safely
+      return Function('"use strict"; return (' + safe + ')')();
 
-    for (let i = 1; i < tokens.length; i += 2) {
-      const op = tokens[i];
-      const num = Number(tokens[i + 1]);
-
-      switch (op) {
-        case '+': result += num; break;
-        case '-': result -= num; break;
-        case '*': result *= num; break;
-        case '/': result /= num; break;
-      }
+    } catch {
+      return 0;
     }
-
-    return result;
   }
 }

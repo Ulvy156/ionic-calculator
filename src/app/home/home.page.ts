@@ -80,7 +80,8 @@ export class HomePage {
       .replace(/×/g, '*')
       .replace(/÷/g, '/')
       .replace(/−/g, '-')
-      .replace(/,/g, '');
+      .replace(/,/g, '')
+      .trim();
 
     // Close history modal
     this.showHistory = false;
@@ -121,7 +122,15 @@ export class HomePage {
           '($1/100)'
         );
 
-        result = this.calcService.calculate(resolved);
+const clean = resolved
+  .replace(/×/g, '*')
+  .replace(/÷/g, '/')
+  .replace(/−/g, '-')
+  .replace(/\s+/g, '');
+
+result = this.calcService.calculate(clean);
+
+
       }
 
       // save history
@@ -205,29 +214,20 @@ export class HomePage {
   toggleSign() {
     if (!this.display) return;
 
-    // Match last number (with or without parentheses)
-    const regex = /(\(-?\d+(\.\d+)?\)|-?\d+(\.\d+)?)$/;
-    const match = this.display.match(regex);
-
+    const match = this.display.match(/-?\d+(\.\d+)?$/);
     if (!match) return;
 
-    const value = match[0];
-    let replaced = '';
+    const num = match[0];
 
-    if (value.startsWith('(-')) {
-      // (-5) → 5
-      replaced = value.slice(2, -1);
-    } else if (value.startsWith('-')) {
-      // -5 → 5
-      replaced = value.slice(1);
-    } else {
-      // 5 → (-5)
-      replaced = `(-${value})`;
-    }
+    const toggled = num.startsWith('-')
+      ? num.slice(1)
+      : '-' + num;
 
     this.display =
-      this.display.slice(0, this.display.length - value.length) + replaced;
+      this.display.slice(0, this.display.length - num.length) + toggled;
   }
+
+
 
   percent() {
     if (!this.display) return;
